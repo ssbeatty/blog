@@ -1,24 +1,21 @@
 function savePostAsImg() {
-  var post = document.querySelector('#dream-save-post-as-img')
-  var style = window.getComputedStyle(post)
-  var segments = $('#dream-save-post-as-img .ui.attached.segment')
-  var width = $(':first-child', segments).prop('offsetWidth') + style.paddingLeft + style.paddingRight
-  var height = 0
-  var height = segments.each(function () {
-    height + $(this).prop('offsetHeight')
-  })
+  var post = $('#dream-save-post-as-img')
+  var useWidth = post.prop('scrollWidth')
+  var useHeight = post.prop('scrollHeight')
 
   var canvas = document.createElement('canvas')
+  var width = useWidth
+  var height = useHeight
   var scale = 2
   canvas.width = width * scale
   canvas.height = height * scale
   canvas.getContext('2d').scale(scale, scale)
 
   html2canvas(document.querySelector('#dream-save-post-as-img'), {
-    canvas,
-    width,
-    height,
-    scale,
+    canvas: canvas,
+    width: width,
+    height: height,
+    scale: scale,
   }).then(function (canvas) {
     var ctx = canvas.getContext('2d')
 
@@ -31,10 +28,7 @@ function savePostAsImg() {
 
     var link = document.createElement('a')
     link.href = URL.createObjectURL(dataURLtoBlob(data))
-    link.download = `${document.title
-      .split('|')
-      .map((d) => d.trim())
-      .join('-')}.png`
+    link.download = `${document.title.replace('|', '').split(' ').join('-')}.png`
     link.click()
   })
 

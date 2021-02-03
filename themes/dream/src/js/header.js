@@ -1,5 +1,6 @@
 $(document).ready(() => {
   initTags()
+  initAccordion()
 })
 
 const SemanticUIColors = [
@@ -29,4 +30,12 @@ function initTags() {
     .map(function () {
       $(this).addClass(SemanticUIColors[randomInt(0, SemanticUIColors.length)])
     })
+}
+
+function initAccordion() {
+  $('.dream-categories .ui.accordion').accordion({
+    selector: {
+      trigger: '.title .icon',
+    },
+  })
 }

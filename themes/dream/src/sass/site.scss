@@ -1,6 +1,7 @@
 @import 'common';
 
 body {
+  background-attachment: fixed;
   background-position: center;
   background-size: cover;
 
@@ -29,7 +30,7 @@ body {
     -webkit-transform-style: preserve-3d;
     -moz-transform-style: preserve-3d;
     transform-style: preserve-3d;
-    transition: all 0.75s ease;
+    transition: all 0.8s ease;
   }
 
   .front,
@@ -70,7 +71,7 @@ body {
 
 .dream-404-container {
   position: fixed;
-  top: calc(50% - 54px);
+  top: 50%;
   left: 50%;
   width: 100%;
   transform: translate3d(-50%, -50%, 0);
@@ -109,65 +110,71 @@ body {
     }
 
     a {
-      color: $black87;
+      color: rgba(#000, 0.87);
     }
   }
 }
 
 .dream-header {
-  @include VHCenter;
+  position: relative;
+  z-index: 999;
 
-  .content {
-    max-width: 512px;
-    margin-left: 2rem;
+  .header-socials {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    .dream-socials {
+      justify-content: center;
+    }
   }
+}
 
-  .ui.horizontal.list {
-    line-height: 1rem;
+.dream-tags {
+  .ui.label {
+    margin: 0.5rem 0;
   }
+}
 
-  .dream-tags .ui.label {
-    margin-top: 1rem;
-  }
-
-  @media screen and (max-width: 768px) {
-    flex-direction: column;
-
-    .content {
-      margin-top: 2rem;
-      margin-left: unset;
-      text-align: center;
+.dream-categories {
+  .ui.accordion {
+    .ui.list {
+      .item {
+        padding-left: 1rem;
+      }
     }
   }
 }
 
 .dream-grid {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+  margin: 1rem !important;
+  margin-top: 0 !important;
+
+  .dream-column {
+    .ui.card {
+      width: 100%;
+    }
+  }
 }
 
 .ui.card.dream-card {
-  > .image {
-    border-top-left-radius: inherit !important;
-    border-top-right-radius: inherit !important;
-  }
+  border-radius: 0.28571429rem !important;
 
   &.inverted .content {
     .header > a {
-      color: $white87 !important;
+      color: #fff !important;
     }
 
     .meta {
-      color: $white60;
+      color: rgba(#fff, 0.4);
     }
 
     .description {
-      color: $white87;
+      color: rgba(#fff, 0.87);
     }
   }
 
   &.inverted .extra {
-    color: $white60;
+    color: rgba(#fff, 0.4);
   }
 
   .content {
@@ -175,13 +182,13 @@ body {
       margin-bottom: 0;
 
       a {
-        color: $black87 !important;
+        color: #000 !important;
       }
     }
 
     .description {
       margin-top: 1rem;
-      color: $black87;
+      color: rgba(#000, 0.87);
       overflow-wrap: break-word;
 
       img {
@@ -198,7 +205,6 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    border-top: none !important;
 
     .author {
       display: flex;
@@ -220,7 +226,6 @@ body {
       height: 256px;
       background-position: center;
       background-size: cover;
-      border-radius: inherit;
 
       @media screen and (max-width: 768px) {
         height: 128px;
@@ -234,12 +239,6 @@ body {
 
   .main {
     margin-top: 2rem;
-  }
-
-  .ui.inverted.segment {
-    blockquote {
-      color: $white60;
-    }
   }
 }
 
@@ -297,11 +296,11 @@ body {
 
   .result,
   .message.empty {
-    border-color: rgba(#000, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
 
     &:hover,
     &.active {
-      background: rgba(#000, 0.1);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .title,
@@ -310,7 +309,7 @@ body {
     }
 
     .description {
-      color: $white87;
+      color: rgba(#fff, 0.87);
     }
   }
 }

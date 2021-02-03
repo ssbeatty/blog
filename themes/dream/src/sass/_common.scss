@@ -1,6 +1,5 @@
-$white87: rgba(#fff, 0.87);
-$white60: rgba(#fff, 0.6);
-$black87: rgba(#000, 0.87);
+$MenuHeight: 40px;
+$ContainerHeight: calc(100% - #{$MenuHeight} - 1rem);
 
 @mixin VHCenter {
   display: flex;
