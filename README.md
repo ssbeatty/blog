@@ -1,7 +1,10 @@
 ## 初始化操作
 
-```shell
-git submodule init
-git submodule update
-```
+新增文章
+```shell script
+./build.sh
 
+git add .
+git commit -m "title"
+git push
+```
