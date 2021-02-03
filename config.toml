@@ -1,0 +1,65 @@
+baseURL = "http://sasaba.net"
+languageCode = "zh-Hans"
+defaultContentLanguage = "zh"
+title = "sasaba 的博客"
+theme = "dream"
+disqusShortname = "sasaba"
+
+enableRobotsTXT = true
+hasCJKLanguage = true
+
+# https://gohugo.io/news/0.60.0-relnotes/
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[params]
+    background = "#ccc"
+    backgroundImage = "/me/background.jpg"
+    linkColor = "seagreen"
+
+    # dark mode
+    # defaultDark = true
+    backgroundDark = "black"
+    backgroundImageDark = "/me/background-dark.jpg"
+    darkLinkColor = "darkseagreen"
+    darkNav = true
+    dark404 = true
+
+
+    author = "sasaba"
+    description = "sasaba 的生活记录～"
+    avatar = "/me/sasaba.jpg"
+    headerTitle = "sasaba 的博客"
+    motto = "路漫漫其修远兮，吾将上下而求索。"
+    categoriesLimitInHeader = 6
+
+    rss = true
+    email = "wang918562230@qq.com"
+    github = "sasaba"
+
+    # twitter = "g1eny0ung"
+    # facebook = "g1eny0ung"
+    # instagram = "g1eny0ung"
+    # mastodon = ""
+    # linkedin = "g1eny0ung"
+    # stackoverflow = "5676489/g1eny0ung"
+    # codepen = "g1eny0ung"
+
+    # siteStartYear = 2016
+
+    favicon = "/favicon.ico"
+
+
+    highlightjs = true
+    # highlightjsCDN = "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"
+    highlightjsExtraLanguages = ["ocaml"]
+    highlightjsTheme = "vs"
+    highlightjsThemeDark = "monokai-sublime"
+
+    # search
+    enableSearch = true
+
+    # options
+    showSummaryCoverInPost = true

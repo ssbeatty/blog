@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>生活 on sasaba 的博客</title>
+    <link>http://sasaba.net/tags/%E7%94%9F%E6%B4%BB/</link>
+    <description>Recent content in 生活 on sasaba 的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Mon, 25 Jan 2021 15:47:00 +0800</lastBuildDate><atom:link href="http://sasaba.net/tags/%E7%94%9F%E6%B4%BB/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>第一篇文章</title>
+      <link>http://sasaba.net/posts/example/</link>
+      <pubDate>Mon, 25 Jan 2021 15:47:00 +0800</pubDate>
+      
+      <guid>http://sasaba.net/posts/example/</guid>
+      <description>&lt;p&gt;第一篇的文章，用作例子。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

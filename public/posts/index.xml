@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on sasaba 的博客</title>
+    <link>http://sasaba.net/posts/</link>
+    <description>Recent content in Posts on sasaba 的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Tue, 26 Jan 2021 11:46:09 +0800</lastBuildDate><atom:link href="http://sasaba.net/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hyperv安装openwrt</title>
+      <link>http://sasaba.net/posts/hyperv_openwrt/</link>
+      <pubDate>Tue, 26 Jan 2021 11:46:09 +0800</pubDate>
+      
+      <guid>http://sasaba.net/posts/hyperv_openwrt/</guid>
+      <description>&lt;p&gt;使用hyper-v安装openwrt路由器，实现透明代理。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Openwrt自编译</title>
+      <link>http://sasaba.net/posts/openwrt/</link>
+      <pubDate>Tue, 26 Jan 2021 10:17:07 +0800</pubDate>
+      
+      <guid>http://sasaba.net/posts/openwrt/</guid>
+      <description>&lt;p&gt;详细记录编译OpenWrt的过程，避免之后需要使用时失忆。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>RabbitMQ基础操作</title>
+      <link>http://sasaba.net/posts/rabbitmq_op/</link>
+      <pubDate>Tue, 26 Jan 2021 09:50:05 +0800</pubDate>
+      
+      <guid>http://sasaba.net/posts/rabbitmq_op/</guid>
+      <description>&lt;p&gt;RabbitMQ基础操作的python实现与例子。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>邓书树结构</title>
+      <link>http://sasaba.net/posts/tree/</link>
+      <pubDate>Tue, 26 Jan 2021 09:43:05 +0800</pubDate>
+      
+      <guid>http://sasaba.net/posts/tree/</guid>
+      <description>&lt;p&gt;邓书树结构C++实现，可以参考遍历树结构的方法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>第一篇文章</title>
+      <link>http://sasaba.net/posts/example/</link>
+      <pubDate>Mon, 25 Jan 2021 15:47:00 +0800</pubDate>
+      
+      <guid>http://sasaba.net/posts/example/</guid>
+      <description>&lt;p&gt;第一篇的文章，用作例子。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>proxy on sasaba 的博客</title>
+    <link>http://sasaba.net/tags/proxy/</link>
+    <description>Recent content in proxy on sasaba 的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-Hans</language>
+    <lastBuildDate>Tue, 26 Jan 2021 10:17:07 +0800</lastBuildDate><atom:link href="http://sasaba.net/tags/proxy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Openwrt自编译</title>
+      <link>http://sasaba.net/posts/openwrt/</link>
+      <pubDate>Tue, 26 Jan 2021 10:17:07 +0800</pubDate>
+      
+      <guid>http://sasaba.net/posts/openwrt/</guid>
+      <description>&lt;p&gt;详细记录编译OpenWrt的过程，避免之后需要使用时失忆。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

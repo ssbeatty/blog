@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>邓书树结构 | sasaba 的博客</title>
+
+    
+<link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+
+
+
+<meta name="author" content="sasaba" />
+<meta name="description" content="邓书树结构C&#43;&#43;实现，可以参考遍历树结构的方法。
+" />
+
+
+
+<meta name="generator" content="Hugo 0.80.0" />
+
+<link rel="canonical" href="http://sasaba.net/posts/tree/" />
+
+
+<meta property="og:title" content="邓书树结构" />
+<meta property="og:description" content="邓书树结构C&#43;&#43;实现，可以参考遍历树结构的方法。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://sasaba.net/posts/tree/" />
+<meta property="og:image" content="http://sasaba.net/some/Understanding-Computation.jpg" />
+<meta property="article:published_time" content="2021-01-26T09:43:05+08:00" />
+<meta property="article:modified_time" content="2021-01-26T09:43:05+08:00" />
+
+
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://sasaba.net/some/Understanding-Computation.jpg"/>
+
+<meta name="twitter:title" content="邓书树结构"/>
+<meta name="twitter:description" content="邓书树结构C&#43;&#43;实现，可以参考遍历树结构的方法。"/>
+
+
+<link rel="stylesheet" href="/css/semantic.min.css" />
+<link rel="stylesheet" href="/css/icomoon.css" />
+<link rel="stylesheet" href="/css/OverlayScrollbars.min.css" />
+<link rel="stylesheet" href="/css/github-markdown.css" />
+<link rel="stylesheet" href="/css/site.css" />
+
+<style>
+  a:hover {
+    text-decoration: underline;
+  }
+
+  
+  a {
+    color: seagreen !important;
+  }
+  
+
+  
+  .inverted a,
+  .inverted a:hover {
+     color: darkseagreen !important;
+  }
+  
+
+  
+  body.default {
+    
+    background-color: #ccc;
+    
+
+    
+    background-image: url(/me/background.jpg);
+    
+  }
+  
+
+  
+  body.dark {
+    
+    background-color: black;
+    
+
+    
+    background-image: url(/me/background-dark.jpg);
+    
+  }
+  
+</style>
+
+    
+
+
+  
+    <link rel="stylesheet" data-highlight href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/vs.min.css" />
+  
+
+
+
+
+
+    
+  </head>
+
+  <body class="default">
+    
+<nav class="ui secondary menu dream-menu">
+
+  <div class="item">
+    <i class="large link bullseye icon dream-flip-toggle" title="翻转！"></i>
+  </div>
+  <div class="item">
+    <i class="large link home icon" title="首页" onclick="window.location.href = 'http:\/\/sasaba.net'"></i>
+  </div>
+  <div class="item">
+    <i class="large link icon theme-switch" onclick="themeSwitch()"></i>
+  </div>
+  
+  <div class="item">
+    <i class="large link search icon" onclick="toggleSearch()"></i>
+  </div>
+  
+</nav>
+
+    <div class="flip-container">
+      <div class="flipper">
+        <section class="front">
+          <div class="dream-max-width">
+            
+<div class="ui centered relaxed grid dream-grid">
+  <div class="sixteen wide mobile sixteen wide tablet twelve wide computer column markdown-body dream-single" id="dream-save-post-as-img">
+    
+    <section class="ui top attached segment cover">
+      <div class="cover-img" style="background-image: url(/some/Understanding-Computation.jpg);"></div>
+    </section>
+    
+    <section class="ui attached segment">
+      <header>
+        <h1 class="ui large header">
+          邓书树结构
+          <div class="sub header">
+            @
+            
+              
+                sasaba
+              
+            
+
+            | 
+                星期二，一月 26 日，2021 年
+              
+
+            | 7 分钟阅读
+
+            | 更新于
+              
+                星期二，一月 26 日，2021 年
+              
+          </div>
+        </h1>
+      </header>
+
+      <article class="main"><p>邓书树结构C++实现，可以参考遍历树结构的方法。</p>
+<h2 id="二叉树">二叉树</h2>
+<blockquote>
+<p>树是一种连通无环图。</p>
+<p>树的高度是指最深的叶子的高度。</p>
+<p>n个顶点的树有n-1个边。</p>
+</blockquote>
+<p><strong>树节点</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#define BinNodePosi(T) BinNode&lt;T&gt;* </span><span style="color:#75715e">//节点位置
+</span><span style="color:#75715e"></span><span style="color:#75715e">#define stature(p) ((p) ? (p)-&gt;height : -1) </span><span style="color:#75715e">//节点高度（与“空树高度为-1”的约定相统一）
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">enum</span> { RB_RED, RB_BLACK} RBColor; <span style="color:#75715e">//节点颜色
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">BinNode</span> { <span style="color:#75715e">//二叉树节点模板类
+</span><span style="color:#75715e">// 成员（为简化描述起见统一开放，读者可根据需要进一步封装）
+</span><span style="color:#75715e"></span>   T data; <span style="color:#75715e">//数值
+</span><span style="color:#75715e"></span>   BinNodePosi(T) parent; BinNodePosi(T) lc; BinNodePosi(T) rc; <span style="color:#75715e">//父节点及左、右孩子
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">int</span> height; <span style="color:#75715e">//高度（通用）
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">int</span> npl; <span style="color:#75715e">//Null Path Length（左式堆，也可直接用height代替）
+</span><span style="color:#75715e"></span>   RBColor color; <span style="color:#75715e">//颜色（红黑树）
+</span><span style="color:#75715e">// 构造函数
+</span><span style="color:#75715e"></span>   BinNode() <span style="color:#f92672">:</span>
+      parent ( NULL ), lc ( NULL ), rc ( NULL ), height ( <span style="color:#ae81ff">0</span> ), npl ( <span style="color:#ae81ff">1</span> ), color ( RB_RED ) { }
+   BinNode ( T e, BinNodePosi(T) p <span style="color:#f92672">=</span> NULL, BinNodePosi(T) lc <span style="color:#f92672">=</span> NULL, BinNodePosi(T) rc <span style="color:#f92672">=</span> NULL,
+             <span style="color:#66d9ef">int</span> h <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">int</span> l <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>, RBColor c <span style="color:#f92672">=</span> RB_RED ) <span style="color:#f92672">:</span>
+      data ( e ), parent ( p ), lc ( lc ), rc ( rc ), height ( h ), npl ( l ), color ( c ) { }
+<span style="color:#75715e">// 操作接口
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">size</span>(); <span style="color:#75715e">//统计当前节点后代总数，亦即以其为根的子树的规模
+</span><span style="color:#75715e"></span>   BinNodePosi(T) insertAsLC ( T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> ); <span style="color:#75715e">//作为当前节点的左孩子插入新节点
+</span><span style="color:#75715e"></span>   BinNodePosi(T) insertAsRC ( T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> ); <span style="color:#75715e">//作为当前节点的右孩子插入新节点
+</span><span style="color:#75715e"></span>   BinNodePosi(T) succ(); <span style="color:#75715e">//取当前节点的直接后继
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">void</span> travLevel ( VST<span style="color:#f92672">&amp;</span> ); <span style="color:#75715e">//子树层次遍历
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">void</span> travPre ( VST<span style="color:#f92672">&amp;</span> ); <span style="color:#75715e">//子树先序遍历
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">void</span> travIn ( VST<span style="color:#f92672">&amp;</span> ); <span style="color:#75715e">//子树中序遍历
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">void</span> travPost ( VST<span style="color:#f92672">&amp;</span> ); <span style="color:#75715e">//子树后序遍历
+</span><span style="color:#75715e">// 比较器、判等器（各列其一，其余自行补充）
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">&lt;</span> ( BinNode <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> bn ) { <span style="color:#66d9ef">return</span> data <span style="color:#f92672">&lt;</span> bn.data; } <span style="color:#75715e">//小于
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">==</span> ( BinNode <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> bn ) { <span style="color:#66d9ef">return</span> data <span style="color:#f92672">==</span> bn.data; } <span style="color:#75715e">//等于
+</span><span style="color:#75715e"></span>   BinNodePosi(T) zig(); <span style="color:#75715e">//顺时针旋转
+</span><span style="color:#75715e"></span>   BinNodePosi(T) zag(); <span style="color:#75715e">//逆时针旋转
+</span><span style="color:#75715e"></span>   BinNodePosi(T) balance(); <span style="color:#75715e">//完全平衡化
+</span><span style="color:#75715e"></span>   BinNodePosi(T) imitate( <span style="color:#66d9ef">const</span> BinNodePosi(T) );
+};
+
+</code></pre></div><p><strong>接口</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">// 插入
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> BinNodePosi(T) BinNode<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>insertAsLC ( T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> e )
+{ <span style="color:#66d9ef">return</span> lc <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BinNode ( e, <span style="color:#66d9ef">this</span> ); } <span style="color:#75715e">//将e作为当前节点的左孩子插入二叉树
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> BinNodePosi(T) BinNode<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>insertAsRC ( T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> e )
+{ <span style="color:#66d9ef">return</span> rc <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BinNode ( e, <span style="color:#66d9ef">this</span> ); } <span style="color:#75715e">//将e作为当前节点的右孩子插入二叉树
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// size
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">int</span> BinNode<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>size() { <span style="color:#75715e">//统计当前节点后代总数，即以其为根的子树规模
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">int</span> s <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">//计入本身
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">if</span> ( lc ) s <span style="color:#f92672">+=</span> lc<span style="color:#f92672">-&gt;</span>size(); <span style="color:#75715e">//递归计入左子树规模
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">if</span> ( rc ) s <span style="color:#f92672">+=</span> rc<span style="color:#f92672">-&gt;</span>size(); <span style="color:#75715e">//递归计入右子树规模
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">return</span> s;
+}
+</code></pre></div><p><strong>二叉树</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;BinNode.h&#34; //引入二叉树节点类</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BinTree</span> { <span style="color:#75715e">//二叉树模板类
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">protected</span><span style="color:#f92672">:</span>
+   <span style="color:#66d9ef">int</span> _size; BinNodePosi(T) _root; <span style="color:#75715e">//规模、根节点
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">updateHeight</span> ( BinNodePosi(T) x ); <span style="color:#75715e">//更新节点x的高度
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">updateHeightAbove</span> ( BinNodePosi(T) x ); <span style="color:#75715e">//更新节点x及其祖先的高度
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+   BinTree() <span style="color:#f92672">:</span> _size ( <span style="color:#ae81ff">0</span> ), _root ( NULL ) { } <span style="color:#75715e">//构造函数
+</span><span style="color:#75715e"></span>   <span style="color:#f92672">~</span>BinTree() { <span style="color:#66d9ef">if</span> ( <span style="color:#ae81ff">0</span> <span style="color:#f92672">&lt;</span> _size ) remove ( _root ); } <span style="color:#75715e">//析构函数
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">size</span>() <span style="color:#66d9ef">const</span> { <span style="color:#66d9ef">return</span> _size; } <span style="color:#75715e">//规模
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">empty</span>() <span style="color:#66d9ef">const</span> { <span style="color:#66d9ef">return</span> <span style="color:#f92672">!</span>_root; } <span style="color:#75715e">//判空
+</span><span style="color:#75715e"></span>   BinNodePosi(T) root() <span style="color:#66d9ef">const</span> { <span style="color:#66d9ef">return</span> _root; } <span style="color:#75715e">//树根
+</span><span style="color:#75715e"></span>   BinNodePosi(T) insertAsRoot ( T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> e ); <span style="color:#75715e">//插入根节点
+</span><span style="color:#75715e"></span>   BinNodePosi(T) insertAsLC ( BinNodePosi(T) x, T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> e ); <span style="color:#75715e">//e作为x的左孩子（原无）插入
+</span><span style="color:#75715e"></span>   BinNodePosi(T) insertAsRC ( BinNodePosi(T) x, T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> e ); <span style="color:#75715e">//e作为x的右孩子（原无）插入
+</span><span style="color:#75715e"></span>   BinNodePosi(T) attachAsLC ( BinNodePosi(T) x, BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;*</span> <span style="color:#f92672">&amp;</span>T ); <span style="color:#75715e">//T作为x左子树接入
+</span><span style="color:#75715e"></span>   BinNodePosi(T) attachAsRC ( BinNodePosi(T) x, BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;*</span> <span style="color:#f92672">&amp;</span>T ); <span style="color:#75715e">//T作为x右子树接入
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">remove</span> ( BinNodePosi(T) x ); <span style="color:#75715e">//删除以位置x处节点为根的子树，返回该子树原先的规模
+</span><span style="color:#75715e"></span>   BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;*</span> secede ( BinNodePosi(T) x ); <span style="color:#75715e">//将子树x从当前树中摘除，并将其转换为一棵独立子树
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//操作器
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">void</span> travLevel ( VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#66d9ef">if</span> ( _root ) _root<span style="color:#f92672">-&gt;</span>travLevel ( visit ); } <span style="color:#75715e">//层次遍历
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//操作器
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">void</span> travPre ( VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#66d9ef">if</span> ( _root ) _root<span style="color:#f92672">-&gt;</span>travPre ( visit ); } <span style="color:#75715e">//先序遍历
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//操作器
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">void</span> travIn ( VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#66d9ef">if</span> ( _root ) _root<span style="color:#f92672">-&gt;</span>travIn ( visit ); } <span style="color:#75715e">//中序遍历
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//操作器
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">void</span> travPost ( VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#66d9ef">if</span> ( _root ) _root<span style="color:#f92672">-&gt;</span>travPost ( visit ); } <span style="color:#75715e">//后序遍历
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">&lt;</span> ( BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> t ) <span style="color:#75715e">//比较器（其余自行补充）
+</span><span style="color:#75715e"></span>   { <span style="color:#66d9ef">return</span> _root <span style="color:#f92672">&amp;&amp;</span> t._root <span style="color:#f92672">&amp;&amp;</span> lt ( _root, t._root ); }
+   <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">==</span> ( BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> t ) <span style="color:#75715e">//判等器
+</span><span style="color:#75715e"></span>   { <span style="color:#66d9ef">return</span> _root <span style="color:#f92672">&amp;&amp;</span> t._root <span style="color:#f92672">&amp;&amp;</span> ( _root <span style="color:#f92672">==</span> t._root ); }
+}; <span style="color:#75715e">//BinTree
+</span></code></pre></div><p><strong>接口</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">// stature(p) ((p) ? (p)-&gt;height : -1)
+</span><span style="color:#75715e">// 更新高度
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">int</span> BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>updateHeight ( BinNodePosi(T) x ) <span style="color:#75715e">//更新节点x高度
+</span><span style="color:#75715e"></span>{ <span style="color:#66d9ef">return</span> x<span style="color:#f92672">-&gt;</span>height <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">+</span> __max ( stature ( x<span style="color:#f92672">-&gt;</span>lc ), stature ( x<span style="color:#f92672">-&gt;</span>rc ) ); } <span style="color:#75715e">//具体规则，因树而异
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">void</span> BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>updateHeightAbove ( BinNodePosi(T) x ) <span style="color:#75715e">//更新高度
+</span><span style="color:#75715e"></span>{ <span style="color:#66d9ef">while</span> ( x ) { updateHeight ( x ); x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>parent; } } <span style="color:#75715e">//从x出发，覆盖历代祖先。可优化
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">// insert
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> BinNodePosi(T) BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>insertAsRoot ( T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> e )
+{ _size <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; <span style="color:#66d9ef">return</span> _root <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BinNode<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> ( e ); } <span style="color:#75715e">//将e当作根节点插入空的二叉树
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> BinNodePosi(T) BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>insertAsLC ( BinNodePosi(T) x, T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> e )
+{ _size<span style="color:#f92672">++</span>; x<span style="color:#f92672">-&gt;</span>insertAsLC ( e ); updateHeightAbove ( x ); <span style="color:#66d9ef">return</span> x<span style="color:#f92672">-&gt;</span>lc; } <span style="color:#75715e">//e插入为x的左孩子
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> BinNodePosi(T) BinTree<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>insertAsRC ( BinNodePosi(T) x, T <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> e )
+{ _size<span style="color:#f92672">++</span>; x<span style="color:#f92672">-&gt;</span>insertAsRC ( e ); updateHeightAbove ( x ); <span style="color:#66d9ef">return</span> x<span style="color:#f92672">-&gt;</span>rc; } <span style="color:#75715e">//e插入为x的右孩子
+</span><span style="color:#75715e">//insertAsLC()完全对称，在此省略
+</span><span style="color:#75715e"></span>
+</code></pre></div><blockquote>
+<p>先序 中序 后序事实上是指根节点在顺序的位置，如果先遍历根节点则先序，左&ndash;&gt;根&ndash;&gt;右 则中序。</p>
+</blockquote>
+<p><strong>先序遍历</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">//visit 是函数的指针用来处理节点
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> travPre_R ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树先序遍历算法（递归版）
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span>x ) <span style="color:#66d9ef">return</span>;
+   visit ( x<span style="color:#f92672">-&gt;</span>data );
+   travPre_R ( x<span style="color:#f92672">-&gt;</span>lc, visit );
+   travPre_R ( x<span style="color:#f92672">-&gt;</span>rc, visit );
+}
+
+<span style="color:#75715e">//上面的改为迭代版本 栈实现
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> travPre_I1 ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树先序遍历算法（迭代版#1）
+</span><span style="color:#75715e"></span>   Stack<span style="color:#f92672">&lt;</span>BinNodePosi(T)<span style="color:#f92672">&gt;</span> S; <span style="color:#75715e">//辅助栈
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">if</span> ( x ) S.push ( x ); <span style="color:#75715e">//根节点入栈
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> ( <span style="color:#f92672">!</span>S.empty() ) { <span style="color:#75715e">//在栈变空之前反复循环
+</span><span style="color:#75715e"></span>      x <span style="color:#f92672">=</span> S.pop(); visit ( x<span style="color:#f92672">-&gt;</span>data ); <span style="color:#75715e">//弹出并访问当前节点，其非空孩子的入栈次序为先右后左
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">if</span> ( HasRChild ( <span style="color:#f92672">*</span>x ) ) S.push ( x<span style="color:#f92672">-&gt;</span>rc ); <span style="color:#66d9ef">if</span> ( HasLChild ( <span style="color:#f92672">*</span>x ) ) S.push ( x<span style="color:#f92672">-&gt;</span>lc );
+   }
+}
+
+<span style="color:#75715e">//实现版本2
+</span><span style="color:#75715e">//从当前节点出发，沿左分支不断深入，直至没有左分支的节点；沿途节点遇到后立即访问
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> visitAlongVine ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit, Stack<span style="color:#f92672">&lt;</span>BinNodePosi(T)<span style="color:#f92672">&gt;&amp;</span> S ) {
+   <span style="color:#66d9ef">while</span> ( x ) {
+      visit ( x<span style="color:#f92672">-&gt;</span>data ); <span style="color:#75715e">//访问当前节点
+</span><span style="color:#75715e"></span>      S.push ( x<span style="color:#f92672">-&gt;</span>rc ); <span style="color:#75715e">//右孩子入栈暂存（可优化：通过判断，避免空的右孩子入栈）
+</span><span style="color:#75715e"></span>      x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>lc;  <span style="color:#75715e">//沿左分支深入一层
+</span><span style="color:#75715e"></span>   }
+}
+<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> travPre_I2 ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树先序遍历算法（迭代版#2）
+</span><span style="color:#75715e"></span>   Stack<span style="color:#f92672">&lt;</span>BinNodePosi(T)<span style="color:#f92672">&gt;</span> S; <span style="color:#75715e">//辅助栈
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> ( true ) {
+      visitAlongVine ( x, visit, S ); <span style="color:#75715e">//从当前节点出发，逐批访问
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">if</span> ( S.empty() ) <span style="color:#66d9ef">break</span>; <span style="color:#75715e">//直到栈空
+</span><span style="color:#75715e"></span>      x <span style="color:#f92672">=</span> S.pop(); <span style="color:#75715e">//弹出下一批的起点
+</span><span style="color:#75715e"></span>   }
+}
+</code></pre></div><p><strong>中序遍历</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">//递归
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> travIn_R ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树中序遍历算法（递归版）
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span>x ) <span style="color:#66d9ef">return</span>;
+   travIn_R ( x<span style="color:#f92672">-&gt;</span>lc, visit );
+   visit ( x<span style="color:#f92672">-&gt;</span>data );
+   travIn_R ( x<span style="color:#f92672">-&gt;</span>rc, visit );
+}
+
+<span style="color:#75715e">//实现1
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//从当前节点出发，沿左分支不断深入，直至没有左分支的节点
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> goAlongVine ( BinNodePosi(T) x, Stack<span style="color:#f92672">&lt;</span>BinNodePosi(T)<span style="color:#f92672">&gt;&amp;</span> S ) {
+   <span style="color:#66d9ef">while</span> ( x ) { S.push ( x ); x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>lc; } <span style="color:#75715e">//当前节点入栈后随即向左侧分支深入，迭代直到无左孩子
+</span><span style="color:#75715e"></span>}
+<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> travIn_I1 ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树中序遍历算法（迭代版#1）
+</span><span style="color:#75715e"></span>   Stack<span style="color:#f92672">&lt;</span>BinNodePosi(T)<span style="color:#f92672">&gt;</span> S; <span style="color:#75715e">//辅助栈
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> ( true ) {
+      goAlongVine ( x, S ); <span style="color:#75715e">//从当前节点出发，逐批入栈
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">if</span> ( S.empty() ) <span style="color:#66d9ef">break</span>; <span style="color:#75715e">//直至所有节点处理完毕
+</span><span style="color:#75715e"></span>      x <span style="color:#f92672">=</span> S.pop(); visit ( x<span style="color:#f92672">-&gt;</span>data ); <span style="color:#75715e">//弹出栈顶节点并访问之
+</span><span style="color:#75715e"></span>      x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>rc; <span style="color:#75715e">//转向右子树
+</span><span style="color:#75715e"></span>   }
+}
+
+<span style="color:#75715e">//实现2
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> travIn_I2 ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树中序遍历算法（迭代版#2）
+</span><span style="color:#75715e"></span>   Stack<span style="color:#f92672">&lt;</span>BinNodePosi(T)<span style="color:#f92672">&gt;</span> S; <span style="color:#75715e">//辅助栈
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> ( true )
+      <span style="color:#66d9ef">if</span> ( x ) {
+         S.push ( x ); <span style="color:#75715e">//根节点进栈
+</span><span style="color:#75715e"></span>         x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>lc; <span style="color:#75715e">//深入遍历左子树
+</span><span style="color:#75715e"></span>      } <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span> ( <span style="color:#f92672">!</span>S.empty() ) {
+         x <span style="color:#f92672">=</span> S.pop(); <span style="color:#75715e">//尚未访问的最低祖先节点退栈
+</span><span style="color:#75715e"></span>         visit ( x<span style="color:#f92672">-&gt;</span>data ); <span style="color:#75715e">//访问该祖先节点
+</span><span style="color:#75715e"></span>         x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>rc; <span style="color:#75715e">//遍历祖先的右子树
+</span><span style="color:#75715e"></span>      } <span style="color:#66d9ef">else</span>
+         <span style="color:#66d9ef">break</span>; <span style="color:#75715e">//遍历完成
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#75715e">//实现3
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> travIn_I3 ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树中序遍历算法（迭代版#3，无需辅助栈）
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">bool</span> backtrack <span style="color:#f92672">=</span> false; <span style="color:#75715e">//前一步是否刚从左子树回溯——省去栈，仅O(1)辅助空间
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> ( true )
+      <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span>backtrack <span style="color:#f92672">&amp;&amp;</span> HasLChild ( <span style="color:#f92672">*</span>x ) ) <span style="color:#75715e">//若有左子树且不是刚刚回溯，则
+</span><span style="color:#75715e"></span>         x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>lc; <span style="color:#75715e">//深入遍历左子树
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">else</span> { <span style="color:#75715e">//否则——无左子树或刚刚回溯（相当于无左子树）
+</span><span style="color:#75715e"></span>         visit ( x<span style="color:#f92672">-&gt;</span>data ); <span style="color:#75715e">//访问该节点
+</span><span style="color:#75715e"></span>         <span style="color:#66d9ef">if</span> ( HasRChild ( <span style="color:#f92672">*</span>x ) ) { <span style="color:#75715e">//若其右子树非空，则
+</span><span style="color:#75715e"></span>            x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>rc; <span style="color:#75715e">//深入右子树继续遍历
+</span><span style="color:#75715e"></span>            backtrack <span style="color:#f92672">=</span> false; <span style="color:#75715e">//并关闭回溯标志
+</span><span style="color:#75715e"></span>         } <span style="color:#66d9ef">else</span> { <span style="color:#75715e">//若右子树空，则
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span> ( x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>succ() ) ) <span style="color:#66d9ef">break</span>; <span style="color:#75715e">//回溯（含抵达末节点时的退出返回）
+</span><span style="color:#75715e"></span>            backtrack <span style="color:#f92672">=</span> true; <span style="color:#75715e">//并设置回溯标志
+</span><span style="color:#75715e"></span>         }
+      }
+}
+
+<span style="color:#75715e">//实现4
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> travIn_I4 ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树中序遍历（迭代版#4，无需栈或标志位）
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> ( true )
+      <span style="color:#66d9ef">if</span> ( HasLChild ( <span style="color:#f92672">*</span>x ) ) <span style="color:#75715e">//若有左子树，则
+</span><span style="color:#75715e"></span>         x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>lc; <span style="color:#75715e">//深入遍历左子树
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">else</span> { <span style="color:#75715e">//否则
+</span><span style="color:#75715e"></span>         visit ( x<span style="color:#f92672">-&gt;</span>data ); <span style="color:#75715e">//访问当前节点，并
+</span><span style="color:#75715e"></span>         <span style="color:#66d9ef">while</span> ( <span style="color:#f92672">!</span>HasRChild ( <span style="color:#f92672">*</span>x ) ) <span style="color:#75715e">//不断地在无右分支处
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span> ( x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>succ() ) ) <span style="color:#66d9ef">return</span>; <span style="color:#75715e">//回溯至直接后继（在没有后继的末节点处，直接退出）
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">visit</span> ( x<span style="color:#f92672">-&gt;</span>data ); <span style="color:#75715e">//访问新的当前节点
+</span><span style="color:#75715e"></span>         x <span style="color:#f92672">=</span> x<span style="color:#f92672">-&gt;</span>rc; <span style="color:#75715e">//（直至有右分支处）转向非空的右子树
+</span><span style="color:#75715e"></span>      }
+}
+</code></pre></div><p><strong>后序遍历</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">//递归
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> travPost_R ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树后序遍历算法（递归版）
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">if</span> ( <span style="color:#f92672">!</span>x ) <span style="color:#66d9ef">return</span>;
+   travPost_R ( x<span style="color:#f92672">-&gt;</span>lc, visit );
+   travPost_R ( x<span style="color:#f92672">-&gt;</span>rc, visit );
+   visit ( x<span style="color:#f92672">-&gt;</span>data );
+}
+
+<span style="color:#75715e">// 迭代版
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//在以S栈顶节点为根的子树中，找到最高左侧可见叶节点
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> gotoLeftmostLeaf ( Stack<span style="color:#f92672">&lt;</span>BinNodePosi(T)<span style="color:#f92672">&gt;&amp;</span> S ) { <span style="color:#75715e">//沿途所遇节点依次入栈
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> ( BinNodePosi(T) x <span style="color:#f92672">=</span> S.top() ) <span style="color:#75715e">//自顶而下，反复检查当前节点（即栈顶）
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">if</span> ( HasLChild ( <span style="color:#f92672">*</span>x ) ) { <span style="color:#75715e">//尽可能向左
+</span><span style="color:#75715e"></span>         <span style="color:#66d9ef">if</span> ( HasRChild ( <span style="color:#f92672">*</span>x ) ) S.push ( x<span style="color:#f92672">-&gt;</span>rc ); <span style="color:#75715e">//若有右孩子，优先入栈
+</span><span style="color:#75715e"></span>         S.push ( x<span style="color:#f92672">-&gt;</span>lc ); <span style="color:#75715e">//然后才转至左孩子
+</span><span style="color:#75715e"></span>      } <span style="color:#66d9ef">else</span> <span style="color:#75715e">//实不得已
+</span><span style="color:#75715e"></span>         S.push ( x<span style="color:#f92672">-&gt;</span>rc ); <span style="color:#75715e">//才向右
+</span><span style="color:#75715e"></span>   S.pop(); <span style="color:#75715e">//返回之前，弹出栈顶的空节点
+</span><span style="color:#75715e"></span>}
+
+<span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span>
+<span style="color:#66d9ef">void</span> travPost_I ( BinNodePosi(T) x, VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树的后序遍历（迭代版）
+</span><span style="color:#75715e"></span>   Stack<span style="color:#f92672">&lt;</span>BinNodePosi(T)<span style="color:#f92672">&gt;</span> S; <span style="color:#75715e">//辅助栈
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">if</span> ( x ) S.push ( x ); <span style="color:#75715e">//根节点入栈
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> ( <span style="color:#f92672">!</span>S.empty() ) { <span style="color:#75715e">//x始终为当前节点
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">if</span> ( S.top() <span style="color:#f92672">!=</span> x<span style="color:#f92672">-&gt;</span>parent ) <span style="color:#75715e">////若栈顶非x之父（而为右兄）
+</span><span style="color:#75715e"></span>         gotoLeftmostLeaf ( S ); <span style="color:#75715e">//则在其右兄子树中找到HLVFL（相当于递归深入）
+</span><span style="color:#75715e"></span>      x <span style="color:#f92672">=</span> S.pop(); visit ( x<span style="color:#f92672">-&gt;</span>data ); <span style="color:#75715e">//弹出栈顶（即前一节点之后继），并访问之
+</span><span style="color:#75715e"></span>   }
+}
+</code></pre></div><p><strong>层次遍历</strong></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">/*DSA*/</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;queue/queue.h&#34; //引入队列</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> VST<span style="color:#f92672">&gt;</span> <span style="color:#75715e">//元素类型、操作器
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> BinNode<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>travLevel ( VST<span style="color:#f92672">&amp;</span> visit ) { <span style="color:#75715e">//二叉树层次遍历算法
+</span><span style="color:#75715e"></span>   Queue<span style="color:#f92672">&lt;</span>BinNodePosi(T)<span style="color:#f92672">&gt;</span> Q; <span style="color:#75715e">//辅助队列
+</span><span style="color:#75715e"></span>   Q.enqueue ( <span style="color:#66d9ef">this</span> ); <span style="color:#75715e">//根节点入队
+</span><span style="color:#75715e"></span>   <span style="color:#66d9ef">while</span> ( <span style="color:#f92672">!</span>Q.empty() ) { <span style="color:#75715e">//在队列再次变空之前，反复迭代
+</span><span style="color:#75715e"></span>      BinNodePosi(T) x <span style="color:#f92672">=</span> Q.dequeue(); visit ( x<span style="color:#f92672">-&gt;</span>data ); <span style="color:#75715e">//取出队首节点并访问之
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">if</span> ( HasLChild ( <span style="color:#f92672">*</span>x ) ) Q.enqueue ( x<span style="color:#f92672">-&gt;</span>lc ); <span style="color:#75715e">//左孩子入队
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">if</span> ( HasRChild ( <span style="color:#f92672">*</span>x ) ) Q.enqueue ( x<span style="color:#f92672">-&gt;</span>rc ); <span style="color:#75715e">//右孩子入队
+</span><span style="color:#75715e"></span>   }
+}
+</code></pre></div></article>
+    </section>
+
+    <footer class="ui attached segment dream-tags" data-html2canvas-ignore>
+      
+        
+          <a class="ui label" href="/tags/%E7%AE%97%E6%B3%95" title="算法">算法</a>
+        
+      
+      <div
+        class="ui label"
+        style="float: right; cursor: pointer;"
+        onclick="savePostAsImg()">
+        <i class="save icon"></i>保存为图片
+      </div>
+    </footer>
+
+    
+
+    
+      <footer class="ui bottom attached stacked segment post-disqus-area" data-html2canvas-ignore>
+        <div id="disqus_thread"></div>
+        <script>
+          
+
+
+          var disqus_config = function () {
+            this.page.url = 'http:\/\/sasaba.net\/posts\/tree\/';  
+            this.page.identifier = '\/posts\/tree\/'; 
+          };
+
+          (function() { 
+            var d = document, s = d.createElement('script');
+            s.src = 'https://' + 'sasaba' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </footer>
+    
+    
+    
+
+    
+
+  </div>
+  <aside class="sixteen wide mobile sixteen wide tablet four wide computer column dream-single-aside">
+    
+    
+      <div class="ui segment toc">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#二叉树">二叉树</a></li>
+  </ul>
+</nav>
+      </div>
+    
+
+    <article class="dream-header">
+  <section class="ui top attached center aligned segment">
+    <div class="ui small circular image">
+      
+        <img src="/me/sasaba.jpg">
+      
+    </div>
+
+    
+    <div class="ui medium header">
+    
+      sasaba 的博客
+      <div class="sub header" style="margin-top: 0.5rem;">路漫漫其修远兮，吾将上下而求索。</div>
+    
+    </div>
+    
+
+    <div class="ui horizontal list">
+      
+      <a class="item" href="/posts">
+        <i class="archive icon" title="归档"></i>
+      </a>
+      
+      <a class="item" href="/tags">
+        <i class="tags icon" title="所有标签"></i>
+      </a>
+      <a class="item" href="/categories">
+        <i class="th list icon" title="所有分类"></i>
+      </a>
+    </div>
+  </section>
+
+  
+  <section class="ui attached center aligned segment dream-tags">
+    
+      
+      
+      <a class="ui label" href="/tags/docker/" title="Docker">
+        Docker
+      </a>
+    
+      
+      
+      <a class="ui label" href="/tags/mq/" title="Mq">
+        Mq
+      </a>
+    
+      
+      
+      <a class="ui label" href="/tags/proxy/" title="Proxy">
+        Proxy
+      </a>
+    
+      
+      
+      <a class="ui label" href="/tags/python/" title="Python">
+        Python
+      </a>
+    
+      
+      
+      <a class="ui label" href="/tags/%E5%A8%B1%E4%B9%90/" title="娱乐">
+        娱乐
+      </a>
+    
+      
+      
+      <a class="ui label" href="/tags/%E6%8A%80%E6%9C%AF/" title="技术">
+        技术
+      </a>
+    
+      
+      
+      <a class="ui label" href="/tags/%E7%94%9F%E6%B4%BB/" title="生活">
+        生活
+      </a>
+    
+      
+      
+      <a class="ui label" href="/tags/%E7%AE%97%E6%B3%95/" title="算法">
+        算法
+      </a>
+    
+      
+      
+      <a class="ui label" href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" title="虚拟化">
+        虚拟化
+      </a>
+    
+  </section>
+  
+
+  
+  <section class="ui attached segment dream-categories">
+    <div class="ui accordion">
+      
+      
+      
+      
+      
+
+      
+        
+
+        
+          <div class="title">
+            <i class="dropdown icon"></i>
+            
+            
+            <a class="item" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" title="数据结构">
+              数据结构
+            </a>
+          </div>
+          <div class="content">
+            <div class="ui list">
+            
+              <div class="item">
+                <div class="content">
+                  <a class="item" href="/posts/tree/">邓书树结构</a>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        
+      
+        
+
+        
+          <div class="title">
+            <i class="dropdown icon"></i>
+            
+            
+            <a class="item" href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" title="消息队列">
+              消息队列
+            </a>
+          </div>
+          <div class="content">
+            <div class="ui list">
+            
+              <div class="item">
+                <div class="content">
+                  <a class="item" href="/posts/rabbitmq_op/">RabbitMQ基础操作</a>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        
+      
+        
+
+        
+          <div class="title">
+            <i class="dropdown icon"></i>
+            
+            
+            <a class="item" href="/categories/%E6%B8%B8%E6%88%8F/" title="游戏">
+              游戏
+            </a>
+          </div>
+          <div class="content">
+            <div class="ui list">
+            
+              <div class="item">
+                <div class="content">
+                  <a class="item" href="/fun/dts/">docker部署饥荒服务器</a>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        
+      
+        
+
+        
+          <div class="title">
+            <i class="dropdown icon"></i>
+            
+            
+            <a class="item" href="/categories/%E8%AE%B0%E5%BD%95/" title="记录">
+              记录
+            </a>
+          </div>
+          <div class="content">
+            <div class="ui list">
+            
+              <div class="item">
+                <div class="content">
+                  <a class="item" href="/posts/example/">第一篇文章</a>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        
+      
+        
+
+        
+          <div class="title">
+            <i class="dropdown icon"></i>
+            
+            
+            <a class="item" href="/categories/%E8%B7%AF%E7%94%B1%E5%99%A8/" title="路由器">
+              路由器
+            </a>
+          </div>
+          <div class="content">
+            <div class="ui list">
+            
+              <div class="item">
+                <div class="content">
+                  <a class="item" href="/posts/hyperv_openwrt/">Hyperv安装openwrt</a>
+                </div>
+              </div>
+            
+              <div class="item">
+                <div class="content">
+                  <a class="item" href="/posts/openwrt/">Openwrt自编译</a>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        
+      
+
+      
+    </div>
+  </section>
+  
+
+  <section class="ui attached segment header-socials">
+    <nav class="ui secondary menu dream-menu dream-socials">
+  
+    <div class="item">
+      <a href="/index.xml">
+        <i class=" rss square icon" title="RSS"></i>
+      </a>
+    </div>
+  
+  
+    <div class="item">
+      <a href="mailto:wang918562230@qq.com">
+        <i class=" mail icon" title="Email"></i>
+      </a>
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class="item">
+      <a href="https://github.com/sasaba" target="_blank">
+        <i class=" github icon" title="GitHub"></i>
+      </a>
+    </div>
+  
+
+  
+
+  
+</nav>
+
+  </section>
+
+  <section class="ui bottom attached center aligned segment">
+    
+      <p>© 2021 sasaba 的博客</p>
+    
+
+    <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</p>
+
+    
+  </section>
+</article>
+
+  </aside>
+</div>
+
+          </div>
+        </section>
+        <section class="back">
+          <div class="dream-max-width">
+            <div class="ui centered relaxed grid dream-grid dream-back">
+  
+  
+  
+
+  <section class="sixteen wide mobile eight wide tablet four wide computer column dream-column">
+    <article>
+      <div class="ui top attached segment">
+        <h3 class="ui header">社交链接</h3>
+      </div>
+      <div class="ui bottom attached segment">
+        <nav class="ui secondary menu dream-menu dream-socials">
+  
+    <div class="item">
+      <a href="/index.xml">
+        <i class="large rss square icon" title="RSS"></i>
+      </a>
+    </div>
+  
+  
+    <div class="item">
+      <a href="mailto:wang918562230@qq.com">
+        <i class="large mail icon" title="Email"></i>
+      </a>
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class="item">
+      <a href="https://github.com/sasaba" target="_blank">
+        <i class="large github icon" title="GitHub"></i>
+      </a>
+    </div>
+  
+
+  
+
+  
+</nav>
+
+      </div>
+    </article>
+  </section>
+
+  <section class="sixteen wide mobile eight wide tablet four wide computer column dream-column">
+    
+  </section>
+
+  
+  
+</div>
+
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+  window.defaultDark =  null 
+  window.backgroundDark = "black"
+  window.backgroundImageDark = "/me/background-dark.jpg"
+  window.darkNav =  true 
+  window.hasTwitterEmbed =  null 
+
+  if (window.hasTwitterEmbed) {
+    
+    window.twttr = (function (d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {}
+      if (d.getElementById(id)) return t
+      js = d.createElement(s)
+      js.id = id
+      js.src = 'https://platform.twitter.com/widgets.js'
+      fjs.parentNode.insertBefore(js, fjs)
+
+      t._e = []
+      t.ready = function (f) {
+        t._e.push(f)
+      }
+
+      return t
+    })(document, 'script', 'twitter-wjs')
+  }
+</script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/semantic.min.js"></script>
+<script src="/js/jquery.overlayScrollbars.min.js"></script>
+<script src="/js/header.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/theme.js"></script>
+
+    
+<script src="/js/html2canvas.min.js"></script>
+<script src="/js/post.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
+
+  
+    
+      <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/ocaml.min.js"></script>
+     
+  
+
+  <script>
+  hljs.initHighlightingOnLoad()
+  setHighlightTheme()
+
+  function setHighlightTheme() {
+    var isDark = localStore.getItem('hugo-theme-dream-is-dark')
+    isDark = isDark ? isDark : window.defaultDark ? 'y' : isDark
+
+    var lightTheme = "vs"
+    var darkTheme = "monokai-sublime"
+    var theme = isDark === 'y' ? darkTheme : lightTheme
+
+    $('link[data-highlight]').attr('href', 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/' + theme + '.min.css')
+    $('pre').css('background', isDark === 'y' ? '#333' : '')
+  }
+</script>
+
+
+
+
+
+    
+      <div class="ui inverted segment" id="dream-search">
+  <div class="ui search">
+    <div class="ui transparent input">
+      <input class="prompt" type="text" placeholder="搜索" />
+    </div>
+    <div class="results"></div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $.getJSON('http:\/\/sasaba.net/index.json', function (data) {
+      $('.ui.search').search({
+        source: data,
+        searchFields: ['title'],
+        showNoResults: true,
+      })
+    })
+  })
+</script>
+<script src="/js/search.js"></script>
+
+    
+
+    
+
+    
+  </body>
+</html>
