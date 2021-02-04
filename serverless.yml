@@ -1,0 +1,42 @@
+component: website
+name: hugoblog
+
+inputs:
+  src:
+    src: ./test
+    index: index.html
+    error: 404.html
+  region: ap-shanghai
+  bucketName: huhoblog-1256963938
+  protocol: http
+  replace: true
+  disableErrorStatus: false
+  autoSetupAcl: true
+  autoSetupPolicy: false
+  env: # 配置前端环境变量
+    API_URL: https://sasaba.cn
+  hosts:
+    - host: sasaba.cn
+      async: false # 是否同步等待 CDN 配置。配置为 false 时，参数 autoRefresh 自动刷新才会生效，如果关联多域名时，为防止超时建议配置为 true。
+      area: overseas
+      autoRefresh: true #开启自动 CDN 刷新，用于快速更新和同步加速域名中展示的站点内容
+      onlyRefresh: false #建议首次部署后，将此参数配置为 true，即忽略其他 CDN 配置，只进行刷新操作
+      https:
+        switch: on
+        http2: on
+        certInfo:
+          certId: 'k6Vj4uib'
+      cache:
+        simpleCache:
+          followOrigin: on
+          cacheRules:
+            - cacheType: all
+              cacheContents:
+                - '*'
+              cacheTime: 1000
+      cacheKey:
+        fullUrlCache: on
+      forceRedirect:
+        switch: on
+        redirectType: https
+        redirectStatusCode: 301
