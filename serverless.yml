@@ -3,10 +3,10 @@ name: hugoblog
 
 inputs:
   src:
-    src: ./test
+    src: ./public
     index: index.html
     error: 404.html
-  region: ap-shanghai
+  region: ap-hongkong
   bucketName: huhoblog-1256963938
   protocol: http
   replace: true
