@@ -13,8 +13,6 @@ inputs:
   disableErrorStatus: false
   autoSetupAcl: true
   autoSetupPolicy: false
-  env: # 配置前端环境变量
-    API_URL: https://sasaba.cn
   hosts:
     - host: sasaba.cn
       async: false # 是否同步等待 CDN 配置。配置为 false 时，参数 autoRefresh 自动刷新才会生效，如果关联多域名时，为防止超时建议配置为 true。
