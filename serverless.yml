@@ -6,7 +6,7 @@ inputs:
     src: ./public
     index: index.html
     error: 404.html
-  region: ap-hongkong
+  region: ap-shanghai
   bucketName: huhoblog-1256963938
   protocol: http
   replace: true
