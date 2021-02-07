@@ -5,7 +5,7 @@ title = "sasaba 的博客"
 theme = "dream"
 disqusShortname = "sasaba"
 
-enableRobotsTXT = false
+enableRobotsTXT = true
 hasCJKLanguage = true
 
 # https://gohugo.io/news/0.60.0-relnotes/
