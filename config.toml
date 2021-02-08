@@ -66,3 +66,7 @@ hasCJKLanguage = true
 
     # options
     showSummaryCoverInPost = true
+
+[params.advanced]
+    customCSS = ["css/custom.css"]
+    customJS = []
