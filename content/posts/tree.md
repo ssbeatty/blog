@@ -3,9 +3,9 @@ title: 邓书树结构
 date: 2021-01-26T09:43:05+08:00
 lastmod: 2021-01-26T09:43:05+08:00
 author: sasaba
-cover: /some/Understanding-Computation.jpg
+cover: /img/邓书树结构.jpg
 images:
-  - /some/Understanding-Computation.jpg
+  - /img/邓书树结构.jpg
 categories:
   - 数据结构
 tags:

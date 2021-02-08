@@ -3,9 +3,9 @@ title: Openwrt自编译
 date: 2021-01-26T10:17:07+08:00
 lastmod: 2021-01-26T10:17:07+08:00
 author: sasaba
-cover: /some/ff1.jpg
+cover: /img/Openwrt自编译.jpg
 images:
-  - /some/ff1.jpg
+  - /img/Openwrt自编译.jpg
 categories:
   - 路由器
 tags:

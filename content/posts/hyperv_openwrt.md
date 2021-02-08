@@ -3,9 +3,9 @@ title: Hyperv安装openwrt
 date: 2021-01-26T11:46:09+08:00
 lastmod: 2021-01-26T17:46:09+08:00
 author: sasaba
-cover: /img/fc1.jpg
+cover: /img/Hyperv安装openwrt.jpg
 images:
-  - /img/fc1.jpg
+  - /img/Hyperv安装openwrt.jpg
 categories:
   - 路由器
 tags:

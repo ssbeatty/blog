@@ -3,9 +3,9 @@ title: RabbitMQ基础操作
 date: 2021-01-26T09:50:05+08:00
 lastmod: 2021-01-26T09:50:05+08:00
 author: sasaba
-cover: /some/Buy-Me-A-Coffee.jpg
+cover: /img/RabbitMQ基础操作.jpg
 images:
-  - /some/Buy-Me-A-Coffee.jpg
+  - /img/RabbitMQ基础操作.jpg
 categories:
   - 消息队列
 tags:

@@ -3,9 +3,9 @@ title: docker部署饥荒服务器
 date: 2021-01-27T16:31:03+08:00
 lastmod: 2021-02-08T12:31:03+08:00
 author: sasaba
-cover: /img/jihuang.jpg
+cover: /img/docker部署饥荒服务器.jpg
 images:
-  - /img/jihuang.jpg
+  - /img/docker部署饥荒服务器.jpg
 categories:
   - 游戏
 tags:
