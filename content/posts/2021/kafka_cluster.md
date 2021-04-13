@@ -7,7 +7,7 @@ cover: /img/使用docker搭建Kafka集群.jpg
 images:
   - /img/使用docker搭建Kafka集群.jpg
 categories:
-  - 云计算
+  - 消息队列
 tags:
   - 技术
   - 配置
@@ -19,6 +19,7 @@ tags:
   工作中需要用到一个kafka集群做开发调试任务，因此记录下搭建配置文件。
 
 
+## 未校验
 ### 配置
 > docker-compose.yaml  
 ```yaml
@@ -148,4 +149,70 @@ func main() {
 	}
 
 }
+```
+
+## 有校验
+目前认知还处于比较浅薄的阶段，所以先简单附上配置。
+> docker-compose.yaml
+```yaml
+version: '2'
+services:
+    zookeeper:
+        image: wurstmeister/zookeeper
+        container_name: zookeeper
+        restart: always
+        ports:
+          - "2181:2181"
+        environment:
+          - ZOOKEEPER_CLIENT_PORT=2181
+          - ZOOKEEPER_TICK_TIME=2000
+          - ZOOKEEPER_MAXCLIENTCNXNS=0
+          - ZOOKEEPER_AUTHPROVIDER.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
+          - ZOOKEEPER_REQUIRECLIENTAUTHSCHEME=sasl
+          - ZOOKEEPER_JAASLOGINRENEW=3600000
+          - KAFKA_OPTS=-Djava.security.auth.login.config=/etc/kafka/secrets/zk_server_jaas.conf
+        volumes:
+          - ./zk_server_jaas.conf:/etc/kafka/secrets/zk_server_jaas.conf
+          
+    kafka1:
+        image: wurstmeister/kafka
+        container_name: kafka1
+        restart: always
+        depends_on:
+          - zookeeper
+        ports:
+             - "9092:9092"
+        volumes:
+          - ./server_jaas.conf:/etc/kafka/secrets/kafka_server_jaas.conf
+        environment:
+          - KAFKA_BROKER_ID=1
+          - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+          - KAFKA_ADVERTISED_LISTENERS=SASL_PLAINTEXT://10.1.1.81:9092
+          - KAFKA_LISTENERS=SASL_PLAINTEXT://0.0.0.0:9092
+          - KAFKA_SECURITY_INTER_BROKER_PROTOCOL=SASL_PLAINTEXT
+          - KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
+          - KAFKA_SASL_ENABLED_MECHANISMS=PLAIN
+          - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.auth.SimpleAclAuthorizer
+          - KAFKA_OPTS=-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf
+          - KAFKA_SUPER_USERS=User:geting
+```
+
+> server_jaas.conf
+```text
+KafkaServer {
+        org.apache.kafka.common.security.plain.PlainLoginModule required
+        username="geting"
+        password="geting"
+        user_geting="geting"
+        user_alice="alice-secret";
+};
+```
+
+> zk_server_jaas.conf
+```text
+zookeeper {
+        org.apache.kafka.common.security.plain.PlainLoginModule required
+        username="geting"
+        password="geting";
+};
 ```
