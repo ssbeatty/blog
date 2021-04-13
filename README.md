@@ -8,3 +8,9 @@ git add .
 git commit -m "title"
 git push
 ```
+
+照片尺寸
+```text
+竖版 640 960
+横版 640 417
+```
