@@ -9,8 +9,8 @@ images:
 categories:
   - 消息队列
 tags:
-  - Python
-  - Mq
+  - python
+  - mq
 draft: true
 ---
 

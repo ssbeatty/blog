@@ -9,8 +9,8 @@ images:
 categories:
   - 消息队列
 tags:
-  - 技术
-  - 配置
+  - docker
+  - mq
 ---
 
 怎么用docker搭建kafka集群，用于测试。

@@ -10,6 +10,7 @@ categories:
   - 数据结构
 tags:
   - 算法
+  - 数据结构
 draft: true
 ---
 

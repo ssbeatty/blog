@@ -9,7 +9,7 @@ images:
 categories:
   - 云计算
 tags:
-  - 技术
+  - serverless
 ---
 
 怎么使用腾讯云serverless部署hugo博客。
