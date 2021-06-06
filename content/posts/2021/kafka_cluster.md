@@ -194,6 +194,7 @@ services:
           - KAFKA_SASL_ENABLED_MECHANISMS=PLAIN
           - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.auth.SimpleAclAuthorizer
           - KAFKA_OPTS=-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf
+          # 超级用户对应KafkaServer里面的用户可以多个User:geting;User:alice
           - KAFKA_SUPER_USERS=User:geting
 
 ```
@@ -202,10 +203,12 @@ services:
 ```text
 KafkaServer {
     org.apache.kafka.common.security.plain.PlainLoginModule required
+    # 用于访问其他节点
     username="geting"
     password="geting"
+    #表示创建一个新用户名alice密码alice
     user_geting="geting"
-    user_alice="alice"; #表示创建一个新用户名alice密码alice
+    user_alice="alice"; 
 };
 
 # 用于连接到zookeeper
