@@ -230,6 +230,11 @@ zookeeper {
 ```
 
 ## 有校验 SHA256
+需要在zookeeper中注册
+```shell script
+kafka-configs.sh --zookeeper zookeeper:2181 --alter --add-config 'SCRAM-SHA-256=[password=admin-secret],SCRAM-SHA-512=[password=admin-secret]' --entity-type users --entity-name admin
+```
+
 > docker-compose.yaml
 ```shell script
   - KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL=SCRAM-SHA-256
