@@ -187,7 +187,7 @@ services:
         environment:
           - KAFKA_BROKER_ID=1
           - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-          - KAFKA_ADVERTISED_LISTENERS=SASL_PLAINTEXT://10.1.1.81:9092
+          - KAFKA_ADVERTISED_LISTENERS=SASL_PLAINTEXT://192.168.50.102:9092
           - KAFKA_LISTENERS=SASL_PLAINTEXT://0.0.0.0:9092
           - KAFKA_SECURITY_INTER_BROKER_PROTOCOL=SASL_PLAINTEXT
           - KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
@@ -195,24 +195,66 @@ services:
           - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.auth.SimpleAclAuthorizer
           - KAFKA_OPTS=-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf
           - KAFKA_SUPER_USERS=User:geting
+
 ```
 
 > server_jaas.conf
 ```text
 KafkaServer {
-        org.apache.kafka.common.security.plain.PlainLoginModule required
-        username="geting"
-        password="geting"
-        user_geting="geting"
-        user_alice="alice-secret";
+    org.apache.kafka.common.security.plain.PlainLoginModule required
+    username="geting"
+    password="geting"
+    user_geting="geting"
+    user_alice="alice"; #表示创建一个新用户名alice密码alice
+};
+
+# 用于连接到zookeeper
+KafkaClient {
+    org.apache.kafka.common.security.plain.PlainLoginModule required
+    username="geting"
+    password="geting";
+};
+
+```
+
+> zk_server_jaas.conf
+```text
+zookeeper {
+    org.apache.kafka.common.security.plain.PlainLoginModule required
+    username="geting"
+    password="geting";
+};
+```
+
+## 有校验 SHA256
+> docker-compose.yaml
+```shell script
+  - KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL=SCRAM-SHA-256
+  - KAFKA_SASL_ENABLED_MECHANISMS=SCRAM-SHA-256
+  - KAFKA_SUPER_USERS=User:admin
+```
+
+> server_jaas.conf
+```text
+KafkaServer {
+    org.apache.kafka.common.security.scram.ScramLoginModule required
+    username="admin"
+    password="admin-secret"
+    user_geting="geting";
+};
+
+KafkaClient {
+    org.apache.kafka.common.security.plain.PlainLoginModule required
+    username="admin"
+    password="admin";
 };
 ```
 
 > zk_server_jaas.conf
 ```text
 zookeeper {
-        org.apache.kafka.common.security.plain.PlainLoginModule required
-        username="geting"
-        password="geting";
+    org.apache.kafka.common.security.plain.PlainLoginModule required
+    username="admin"
+    password="admin";
 };
 ```
