@@ -23,7 +23,7 @@ inputs:
         switch: on
         http2: on
         certInfo:
-          certId: 'jqb4igcY'
+          certId: 'tawhB16d'
       cache:
         simpleCache:
           followOrigin: on
@@ -47,7 +47,7 @@ inputs:
         switch: on
         http2: on
         certInfo:
-          certId: 'jqanwyVx'
+          certId: 'tawhB16d'
       cache:
         simpleCache:
           followOrigin: on
