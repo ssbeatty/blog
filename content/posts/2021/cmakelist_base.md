@@ -96,6 +96,20 @@ target_link_libraries(hasp_test libhasp_windows_x64.a)
 target_link_libraries(hasp_test ws2_32)
 ```
 
+> add_subdirectory
+
+常用于引入submodule的lib。
+
+```text
+# 定义
+add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL])
+
+add_subdirectory(numcpp)
+
+# 后文可以直接使用submodule的工程
+target_link_libraries(${PROJECT_NAME} PRIVATE NumCpp::NumCpp)
+```
+
 ### 流程控制
 
 > 简单的if语句
