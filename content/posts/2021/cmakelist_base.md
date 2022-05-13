@@ -1,7 +1,7 @@
 ---
 title: CMakeList基础
 date: 2021-11-12T15:47:00+08:00
-lastmod: 2021-11-12T15:47:00+08:00
+lastmod: 2022-05-13T15:47:00+08:00
 author: sasaba
 cover: /img/cmake基础.png
 images:
@@ -104,4 +104,14 @@ target_link_libraries(hasp_test ws2_32)
 if(MINGW)
     target_link_libraries(hasp_test ws2_32)
 endif()
+```
+
+### QA
+> 怎么使用gui查看dll依赖
+[Dependencies](https://github.com/lucasg/Dependencies)
+
+> 对于某个lib mingw使用libstdc++.dll的问题
+
+```text
+target_link_libraries(${LIB_NAME} -static stdc++ -dynamic)
 ```
