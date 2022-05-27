@@ -19,7 +19,7 @@ draft: true
 
 ## 起因
 
-某次突然发现正常运行的镜像一直在报`错exec odoo: cannot execute: Is a directory`
+某次突然发现正常运行的镜像一直在报错`exec odoo: cannot execute: Is a directory`
 
 经过检查后发现镜像没有改变过，而且文件目录也是正常的。。
 
