@@ -3,7 +3,7 @@ languageCode = "zh-Hans"
 defaultContentLanguage = "zh"
 title = "sasaba 的博客"
 theme = "dream"
-disqusShortname = "sasaba"
+# disqusShortname = "sasaba"
 
 enableRobotsTXT = true
 hasCJKLanguage = true
