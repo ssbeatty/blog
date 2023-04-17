@@ -9,7 +9,7 @@ images:
 categories:
   - 工具 
 tags:
-  - SSL
+  - Postgres
 draft: true
 ---
 
@@ -146,6 +146,7 @@ Time of latest checkpoint:            Thu 10 Jan 2013 07:56:35 AM CST
 
 注意这两个参数：
 Latest checkpoint's NextXID: 0/ 1888
+
 Latest checkpoint's NextOID: 65595
 
 #### 重置，删除 pg_xlog
