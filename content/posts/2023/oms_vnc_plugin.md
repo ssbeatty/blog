@@ -27,11 +27,11 @@ oms使用插件安装vnc。
 
 ## 如何使用
 
-1. **添加主机和相关配置**
+### 添加主机和相关配置
 
 因为本文主要讲插件的使用，所以这里就不详细讲解如何添加主机了，可以参考[这里](https://wang918562230.gitbook.io/ssbeattyoms-wen-dang/guides/zi-chan-guan-li)。
 
-2. **安装插件**
+### 安装插件
 
 在[这里](https://github.com/ssbeatty/oms_plugins)可以下载到所有的插件。
 
@@ -44,13 +44,12 @@ oms使用插件安装vnc。
 打开oms页面的资产-剧本-导入插件 并选择vnc_install.zip文件和点击**导入文件**。
 ![import_page.png](/context_img/oms_plugin/import_page.png)
 
+<font color="#dd0000">或者直接将vnc_install目录拷贝到oms同级的data/plugin/src目录下。</font><br />
 
-**或者直接将vnc_install目录拷贝到oms同级的data/plugin/src目录下。**
+### 重启oms
 
+### 使用插件
 
-3. **重启oms**
-
-4. **使用插件**
 ![add_plugin.png](/context_img/oms_plugin/add_plugin.png)
 打开oms页面的资产-剧本-添加剧本 并选择vnc_install插件，填写相关参数并点击**确定**。
 
@@ -59,7 +58,7 @@ oms使用插件安装vnc。
 
 等待返回日志即可。
 
-5. **使用vnc**
+### 使用vnc
 
 ![vnc_use.png](/context_img/oms_plugin/vnc_use.png)
 
