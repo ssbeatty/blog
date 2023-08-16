@@ -238,5 +238,10 @@ archives:
         format: zip
 ```
 
+编译
+```shell
+goreleaser release --snapshot --clean
+```
+
 要注意的是要配置PKG_CONFIG_PATH 因为`#cgo pkg-config: libavcodec libavutil libswscale`其实也会寻找对应的头文件，这里以前确实是不懂。
 
