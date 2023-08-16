@@ -3,9 +3,9 @@ title: 记录golang接口赋值nil的坑
 date: 2023-08-16T17:25:05+08:00
 lastmod: 2023-08-16T17:25:05+08:00
 author: sasaba
-cover: /img/记录golang接口赋值nil的坑.jpeg
+cover: /img/记录golang接口赋值nil的坑.png
 images:
-- /img/记录golang接口赋值nil的坑.jpeg
+- /img/记录golang接口赋值nil的坑.png
 categories:
   - Golang 
 tags:
