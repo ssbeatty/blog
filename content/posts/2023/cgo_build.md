@@ -9,7 +9,8 @@ images:
 categories:
   - 工具 
 tags:
-  - Postgres
+  - go
+  - c/c++
 draft: true
 ---
 
